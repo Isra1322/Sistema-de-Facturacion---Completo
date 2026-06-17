@@ -245,6 +245,10 @@ GO
 dotnet run
 
 🔐 Credenciales de Acceso
+```
 Rol	Correo	Contraseña
 Administrador	admin@gmail.com	root
 Vendedor	vendedor@gmail.com	root
+
+Contraseña cifrada: $2a$11$NF9/ttwLqKUOakzEwKhFGuWSam17pk3z4guk/.pXlwnso5JcQHQp6
+```
