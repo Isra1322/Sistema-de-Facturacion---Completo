@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultar Facturas</title>
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/facturas.css">
+</head>
+
+<body>
+  <div class="dashboard-layout" id="dashboardLayout">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-user-info-top">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar"></div>
+        <div class="sidebar-user-details">
+          <strong id="sidebarUsuarioNombre">Usuario</strong>
+          <span class="user-role" id="sidebarUsuarioRol">—</span>
+        </div>
+        <button id="btnToggleThemeSidebar" class="theme-toggle-sidebar" title="Cambiar tema">
+          🌙 Dark mode
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="./index.html" class="nav-link">🏠 Inicio</a>
+        <a href="./usuarios.html" class="nav-link role-admin-only hidden-by-role">👥 Usuarios</a>
+        <a href="./clientes.html" class="nav-link role-admin-only hidden-by-role">👥 Clientes</a>
+        <a href="./productos.html" class="nav-link role-admin-only hidden-by-role">📦 Productos</a>
+        <a href="./factura.html" class="nav-link">🧾 Nueva Factura</a>
+        <a href="./facturas.html" class="nav-link active">📋 Consultar Facturas</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="sidebar-logout" id="btnLogoutSidebar">
+          🚪 Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <header class="topbar">
+        <button class="menu-button" id="btnToggleSidebar" type="button">☰</button>
+
+      </header>
+
+      <section class="page-title">
+        <div class="title-icon">📋</div>
+
+        <div>
+          <h1>Consulta de Facturas</h1>
+          <p>
+            Busca, visualiza e imprime las facturas registradas en el sistema.
+          </p>
+        </div>
+      </section>
+
+      <section class="content-card filter-card">
+
+        <div class="filters-grid">
+
+          <div class="filter-field">
+            <label for="buscarIdCliente">
+              Buscar por id de cliente
+            </label>
+
+            <div class="input-icon-box">
+              <input type="number" id="buscarIdCliente" placeholder="Ej: 25" min="1">
+
+              <span>🔍</span>
+            </div>
+          </div>
+
+          <div class="filter-field">
+            <label for="fechaDesde">Fecha desde</label>
+
+            <input type="date" id="fechaDesde">
+          </div>
+
+          <div class="filter-field">
+            <label for="fechaHasta">Fecha hasta</label>
+
+            <input type="date" id="fechaHasta">
+          </div>
+
+          <button id="btnLimpiarFiltros" type="button" class="btn-secondary">
+            ↻ Limpiar
+          </button>
+
+        </div>
+
+        <p id="mensajeErrorFechas" class="filter-error" aria-live="polite"></p>
+      </section>
+
+      <section class="facturas-layout">
+
+        <section class="content-card results-card">
+
+          <div class="results-header">
+
+            <h3>Total de facturas</h3>
+
+            <span id="totalFacturasTexto">
+              0 registradas
+            </span>
+
+          </div>
+
+          <div class="table-wrapper">
+
+            <table class="facturas-table">
+
+              <colgroup>
+                <col class="col-numero">
+                <col class="col-fecha">
+                <col class="col-id-cliente">
+                <col class="col-cliente">
+                <col class="col-total">
+                <col class="col-acciones">
+              </colgroup>
+
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Fecha</th>
+                  <th>ID Cliente</th>
+                  <th>Cliente</th>
+                  <th>Total</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody id="tablaFacturas">
+
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    Cargando facturas...
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+          <div class="results-footer">
+
+            <span id="textoResultados">
+              Mostrando facturas registradas
+            </span>
+
+            <div class="pagination">
+
+              <button id="btnAnterior" type="button">
+                Anterior
+              </button>
+
+              <span id="paginaActual" class="page-number">
+                1
+              </span>
+
+              <button id="btnSiguiente" type="button">
+                Siguiente
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+      </section>
+
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/paginacion.js"></script>
+  <script src="../js/facturas.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // CAMBIADO: usar las claves correctas que guarda login.js
+      const usuarioNombre = localStorage.getItem('nombre') || localStorage.getItem('usuarioNombre') || sessionStorage.getItem('nombre') || sessionStorage.getItem('usuarioNombre') || 'Usuario';
+      const usuarioRol = localStorage.getItem('rol') || localStorage.getItem('usuarioRol') || sessionStorage.getItem('rol') || sessionStorage.getItem('usuarioRol') || 'Rol';
+      const usuarioAvatar = usuarioNombre !== 'Usuario' ? usuarioNombre.charAt(0).toUpperCase() : '';
+
+      const sidebarNombre = document.getElementById('sidebarUsuarioNombre');
+      const sidebarRol = document.getElementById('sidebarUsuarioRol');
+      const sidebarAvatar = document.getElementById('sidebarUserAvatar');
+
+      if (sidebarNombre) sidebarNombre.textContent = usuarioNombre;
+      if (sidebarRol) sidebarRol.textContent = usuarioRol;
+      if (sidebarAvatar) sidebarAvatar.textContent = usuarioAvatar;
+    });
+
+    const logoutBtn = document.getElementById('btnLogoutSidebar');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        localStorage.removeItem('token');
+        localStorage.removeItem('rol');
+        localStorage.removeItem('nombre');
+        window.location.href = '../pages/login.html';
+      });
+    }
+
+    const themeToggleBtn = document.getElementById('btnToggleThemeSidebar');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', function () {
+        document.body.classList.toggle('dark-mode');
+        if (document.body.classList.contains('dark-mode')) {
+          themeToggleBtn.innerHTML = '☀️ Light mode';
+        } else {
+          themeToggleBtn.innerHTML = '🌙 Dark mode';
+        }
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+      });
+
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        themeToggleBtn.innerHTML = '☀️ Light mode';
+      }
+    }
+  </script>
+</body>
+
+</html>

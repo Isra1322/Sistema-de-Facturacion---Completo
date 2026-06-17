@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Clientes</title>
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/clientes.css">
+</head>
+
+<body>
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+
+
+      <div class="sidebar-user-info-top">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar"></div>
+        <div class="sidebar-user-details">
+          <strong id="sidebarUsuarioNombre">Usuario</strong>
+          <span class="user-role" id="sidebarUsuarioRol">—</span>
+        </div>
+        <button id="btnToggleThemeSidebar" class="theme-toggle-sidebar" title="Cambiar tema">
+          🌙 Dark mode
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="./index.html" class="nav-link">🏠 Inicio</a>
+        <a href="./usuarios.html" class="nav-link role-admin-only hidden-by-role">👥 Usuarios</a>
+        <a href="./clientes.html" class="nav-link active role-admin-only hidden-by-role">👥 Clientes</a>
+        <a href="./productos.html" class="nav-link role-admin-only hidden-by-role">📦 Productos</a>
+        <a href="./factura.html" class="nav-link">🧾 Nueva Factura</a>
+        <a href="./facturas.html" class="nav-link">📋 Consultar Facturas</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="sidebar-logout" id="btnLogoutSidebar">
+          🚪 Cerrar sesión
+        </button>
+      </div>
+
+    </aside>
+
+    <main class="main-content">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="btnToggleSidebar">☰</button>
+        </div>
+
+
+
+      </header>
+
+      <section class="page-title">
+        <div class="title-icon">👥</div>
+
+        <div>
+          <h1>Gestión de Clientes</h1>
+          <p>Administra, registra y busca clientes del sistema.</p>
+        </div>
+      </section>
+
+      <section class="content-card">
+
+        <div class="table-toolbar">
+          <div class="toolbar-left client-filter-bar">
+
+            <div class="filter-field filter-select">
+              <label for="filtroClienteTabla">Filtrar por</label>
+              <select id="filtroClienteTabla">
+                <option value="id">ID</option>
+                <option value="nombre" selected>Nombre</option>
+                <option value="apellido">Apellido</option>
+                <option value="correo">Correo</option>
+                <option value="direccion">Dirección</option>
+              </select>
+            </div>
+
+            <div class="filter-field filter-input">
+              <label for="valorFiltroCliente">Valor a buscar</label>
+              <input type="text" id="valorFiltroCliente" placeholder="Ej: Juan">
+            </div>
+
+            <div class="filter-field filter-select oculto" id="filtroEstadoClienteContainer">
+              <label for="filtroEstadoCliente">Estado</label>
+              <select id="filtroEstadoCliente">
+                <option value="Activo" selected>Activos</option>
+                <option value="Inactivo">Inactivos</option>
+                <option value="Todos">Todos</option>
+              </select>
+            </div>
+
+            <button id="btnMostrarFormulario" class="btn-primary btn-toolbar">
+              + Agregar Cliente
+            </button>
+
+          </div>
+
+          <span id="clientesTotalBadge" class="clients-count-badge">
+            0 clientes registrados
+          </span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre completo</th>
+                <th>Teléfono</th>
+                <th>Correo electrónico</th>
+                <th>Dirección</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="clientesBody"></tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <span id="paginaActual">Página 1</span>
+
+          <div>
+            <button id="btnAnterior">Anterior</button>
+            <button id="btnSiguiente">Siguiente</button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- MODAL FORMULARIO -->
+  <div id="formularioClienteContainer" class="modal-overlay oculto">
+    <div class="form-modal">
+
+      <div class="modal-header">
+        <div>
+          <h2 id="tituloFormulario">Registrar Cliente</h2>
+          <p>Completa los datos del cliente.</p>
+        </div>
+
+        <button id="btnCerrarFormulario" class="modal-close">
+          &times;
+        </button>
+      </div>
+
+      <form id="clienteForm">
+        <input type="hidden" id="idCliente">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" placeholder="Ingrese el nombre" required>
+          </div>
+
+          <div class="form-group">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" placeholder="Ingrese el apellido" required>
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" placeholder="Ingrese el teléfono" maxlength="10" required>
+          </div>
+
+          <div class="form-group">
+            <label for="correo">Correo</label>
+            <input type="email" id="correo" placeholder="Ingrese el correo" required>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" placeholder="Ingrese la dirección" required>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-save" id="btnGuardarCliente">
+          Guardar Cliente
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMACIÓN -->
+  <div id="modalConfirmacion" class="modal-overlay oculto">
+    <div class="confirm-modal">
+      <div class="confirm-icon">⚠️</div>
+
+      <h2 id="confirmTitulo">Confirmar acción</h2>
+      <p id="confirmMensaje">¿Seguro que deseas continuar?</p>
+
+      <div class="confirm-actions">
+        <button id="btnCancelarConfirmacion" class="btn-cancelar">
+          Cancelar
+        </button>
+
+        <button id="btnAceptarConfirmacion" class="btn-confirmar">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/paginacion.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+  <script type="module" src="../js/main.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const usuarioNombre = localStorage.getItem('nombre') || localStorage.getItem('usuarioNombre') || sessionStorage.getItem('nombre') || sessionStorage.getItem('usuarioNombre') || 'Usuario';
+      const usuarioRol = localStorage.getItem('rol') || localStorage.getItem('usuarioRol') || sessionStorage.getItem('rol') || sessionStorage.getItem('usuarioRol') || 'Rol';
+      const usuarioAvatar = usuarioNombre !== 'Usuario' ? usuarioNombre.charAt(0).toUpperCase() : '';
+
+      const sidebarNombre = document.getElementById('sidebarUsuarioNombre');
+      const sidebarRol = document.getElementById('sidebarUsuarioRol');
+      const sidebarAvatar = document.getElementById('sidebarUserAvatar');
+
+      if (sidebarNombre) sidebarNombre.textContent = usuarioNombre;
+      if (sidebarRol) sidebarRol.textContent = usuarioRol;
+      if (sidebarAvatar) sidebarAvatar.textContent = usuarioAvatar;
+    });
+
+    const logoutBtn = document.getElementById('btnLogoutSidebar');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuarioNombre');
+        localStorage.removeItem('usuarioRol');
+        window.location.href = '../pages/login.html';
+      });
+    }
+
+    const themeToggleBtn = document.getElementById('btnToggleThemeSidebar');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', function () {
+        document.body.classList.toggle('dark-mode');
+        if (document.body.classList.contains('dark-mode')) {
+          themeToggleBtn.innerHTML = '☀️ Light mode';
+        } else {
+          themeToggleBtn.innerHTML = '🌙 Dark mode';
+        }
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+      });
+
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        themeToggleBtn.innerHTML = '☀️ Light mode';
+      }
+    }
+  </script>
+</body>
+
+</html>

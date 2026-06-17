@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Sistema de Facturacion</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+    <div class="dashboard-layout" id="dashboardLayout">
+        <aside class="sidebar">
+
+            <div class="sidebar-user-info-top">
+                <div class="sidebar-user-avatar" id="sidebarUserAvatar"></div>
+                <div class="sidebar-user-details">
+                    <strong id="sidebarUsuarioNombre">Usuario</strong>
+                    <span class="user-role" id="sidebarUsuarioRol">—</span>
+                </div>
+                <button id="btnToggleThemeSidebar" class="theme-toggle-sidebar" title="Cambiar tema">
+                    🌙 Dark mode
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="./index.html" class="nav-link active">🏠 Inicio</a>
+                <a href="./usuarios.html" class="nav-link role-admin-only hidden-by-role">👥 Usuarios</a>
+                <a href="./clientes.html" class="nav-link role-admin-only hidden-by-role">👥 Clientes</a>
+                <a href="./productos.html" class="nav-link role-admin-only hidden-by-role">📦 Productos</a>
+                <a href="./factura.html" class="nav-link">🧾 Nueva Factura</a>
+                <a href="./facturas.html" class="nav-link">📋 Consultar Facturas</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" class="sidebar-logout" id="btnLogoutSidebar">
+                    🚪 Cerrar sesión
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-button" id="btnToggleSidebar">☰</button>
+                </div>
+            </header>
+
+            <section class="page-title dashboard-hero">
+                <div class="dashboard-title-group">
+                    <div class="title-icon">📊</div>
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>Bienvenido al sistema de facturacion</p>
+                    </div>
+                </div>
+
+                <div class="date-card" aria-label="Fecha actual">
+                    <span>Hoy</span>
+                    <strong id="fechaActualDashboard">--</strong>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>Clientes registrados</h3>
+                        <p id="totalClientes">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <h3>Productos registrados</h3>
+                        <p id="totalProductos">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🧾</div>
+                    <div class="stat-info">
+                        <h3>Facturas generadas</h3>
+                        <p id="totalFacturas">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <h3>Ventas totales</h3>
+                        <p id="totalVentas">$0.00</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <h3>Ventas del dia</h3>
+                        <p id="ventasHoy">$0.00</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-grid">
+                <article class="content-card sales-card">
+                    <div class="section-header">
+                        <div>
+                            <h2>Resumen de ventas</h2>
+                            <p id="ventasResumenTexto">Sin datos disponibles</p>
+                        </div>
+                        <span class="section-badge" id="facturasHoyBadge">0 hoy</span>
+                    </div>
+
+                    <div class="chart-panel">
+                        <div class="chart-header">
+                            <span>Tendencia por fecha</span>
+                            <strong id="rangoVentasTexto">Ultimos registros</strong>
+                        </div>
+                        <div class="bar-chart" id="ventasPorFechaChart" aria-label="Grafico de ventas por fecha"></div>
+                    </div>
+                </article>
+
+                <article class="content-card distribution-card">
+                    <div class="section-header">
+                        <div>
+                            <h2>Distribucion</h2>
+                            <p>Productos por categoria</p>
+                        </div>
+                    </div>
+
+                    <div class="category-list" id="categoriasProductos">
+                        <div class="empty-panel">Sin datos disponibles</div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="dashboard-bottom-grid">
+                <article class="content-card invoices-card">
+                    <div class="section-header">
+                        <div>
+                            <h2>Ultimas facturas</h2>
+                            <p>Registros recientes del sistema</p>
+                        </div>
+                        <a class="section-link" href="./facturas.html">Ver todas</a>
+                    </div>
+
+                    <div class="table-wrapper dashboard-table-wrapper">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Factura</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ultimasFacturasBody">
+                                <tr>
+                                    <td colspan="4" class="empty-state">Cargando facturas...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <aside class="content-card general-summary">
+                    <div class="section-header compact">
+                        <div>
+                            <h2>Resumen general</h2>
+                            <p id="alcanceDashboardTexto">Datos del sistema</p>
+                        </div>
+                    </div>
+
+                    <div class="summary-list">
+                        <div class="summary-row">
+                            <span>Clientes nuevos este mes</span>
+                            <strong id="clientesMes">0</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Productos nuevos este mes</span>
+                            <strong id="productosMes">0</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Facturas hoy</span>
+                            <strong id="facturasHoy">0</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Ultima factura</span>
+                            <strong id="ultimaFactura">Sin datos</strong>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="../js/toast.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/nav.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const usuarioNombre = localStorage.getItem('usuarioNombre') || localStorage.getItem('nombre') || sessionStorage.getItem('nombre') || 'Usuario';
+            const usuarioRol = localStorage.getItem('usuarioRol') || localStorage.getItem('rol') || sessionStorage.getItem('rol') || 'Rol';
+            const usuarioAvatar = usuarioNombre !== 'Usuario' ? usuarioNombre.charAt(0).toUpperCase() : '';
+
+            const sidebarNombre = document.getElementById('sidebarUsuarioNombre');
+            const sidebarRol = document.getElementById('sidebarUsuarioRol');
+            const sidebarAvatar = document.getElementById('sidebarUserAvatar');
+
+            if (sidebarNombre) sidebarNombre.textContent = usuarioNombre;
+            if (sidebarRol) sidebarRol.textContent = usuarioRol;
+            if (sidebarAvatar) sidebarAvatar.textContent = usuarioAvatar;
+        });
+
+        const logoutBtn = document.getElementById('btnLogoutSidebar');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function () {
+                if (typeof cerrarSesion === 'function') {
+                    cerrarSesion();
+                    return;
+                }
+
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = './login.html';
+            });
+        }
+
+        const themeToggleBtn = document.getElementById('btnToggleThemeSidebar');
+        if (themeToggleBtn) {
+            const aplicarTextoTema = function () {
+                themeToggleBtn.textContent = document.body.classList.contains('dark-mode')
+                    ? '☀️ Light mode'
+                    : '🌙 Dark mode';
+            };
+
+            if (localStorage.getItem('darkMode') === 'true' || localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+
+            aplicarTextoTema();
+
+            themeToggleBtn.addEventListener('click', function () {
+                document.body.classList.toggle('dark-mode');
+                const esOscuro = document.body.classList.contains('dark-mode');
+                localStorage.setItem('darkMode', esOscuro);
+                localStorage.setItem('theme', esOscuro ? 'dark' : 'light');
+                aplicarTextoTema();
+            });
+        }
+    </script>
+</body>
+
+</html>

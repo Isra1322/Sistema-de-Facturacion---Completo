@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Gestión de Usuarios</title>
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/usuarios.css">
+</head>
+
+<body>
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+
+      <!-- Nombre del usuario con círculo y botón dark mode -->
+      <div class="sidebar-user-info-top">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar"></div>
+        <div class="sidebar-user-details">
+          <strong id="sidebarUsuarioNombre">Usuario</strong>
+          <span class="user-role" id="sidebarUsuarioRol">—</span>
+        </div>
+        <button id="btnToggleThemeSidebar" class="theme-toggle-sidebar" title="Cambiar tema">
+          🌙 Dark mode
+        </button>
+      </div>
+
+      <!-- Menú de navegación -->
+      <nav class="sidebar-nav">
+        <a href="./index.html" class="nav-link">🏠 Inicio</a>
+        <a href="./usuarios.html" class="nav-link active role-admin-only hidden-by-role">👥 Usuarios</a>
+        <a href="./clientes.html" class="nav-link role-admin-only hidden-by-role">👥 Clientes</a>
+        <a href="./productos.html" class="nav-link role-admin-only hidden-by-role">📦 Productos</a>
+        <a href="./factura.html" class="nav-link">🧾 Nueva Factura</a>
+        <a href="./facturas.html" class="nav-link">📋 Consultar Facturas</a>
+      </nav>
+
+      <!-- Cerrar sesión abajo del todo (gris, hover rojo) -->
+      <div class="sidebar-footer">
+        <button type="button" class="sidebar-logout" id="btnLogoutSidebar">
+          🚪 Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="btnToggleSidebar">☰</button>
+        </div>
+      </header>
+
+      <section class="page-title">
+        <div class="title-icon">👥</div>
+        <div>
+          <h1>Gestión de Usuarios</h1>
+          <p>Administra los usuarios del sistema</p>
+        </div>
+      </section>
+
+      <section class="content-card">
+
+        <div class="table-toolbar">
+          <div class="table-actions">
+            <div class="filter-field filter-select">
+              <label for="filtroUsuarioTabla">Filtrar por</label>
+              <select id="filtroUsuarioTabla">
+                <option value="id">ID</option>
+                <option value="nombre" selected>Nombre</option>
+                <option value="rol">Rol</option>
+                <option value="estado">Estado</option>
+              </select>
+            </div>
+
+            <div class="filter-field filter-input">
+              <label for="valorFiltroUsuario">Valor a buscar</label>
+              <input type="text" id="valorFiltroUsuario" placeholder="Ej: Administrador">
+
+              <select id="valorFiltroRolUsuario" class="oculto">
+                <option value="">Todos</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Vendedor">Vendedor</option>
+              </select>
+
+              <select id="valorFiltroEstadoUsuario" class="oculto">
+                <option value="">Todos</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+                <option value="Bloqueado">Bloqueado</option>
+              </select>
+            </div>
+
+            <button id="btnMostrarFormulario" class="btn-primary btn-toolbar">
+              + Nuevo Usuario
+            </button>
+          </div>
+
+          <span id="usuariosTotalBadge" class="users-count-badge">
+            0 usuarios registrados
+          </span>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="usuariosBody"></tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <span id="paginaActual">Página 1</span>
+
+          <div>
+            <button id="btnAnterior">Anterior</button>
+            <button id="btnSiguiente">Siguiente</button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL FORMULARIO -->
+  <div id="formularioUsuarioContainer" class="modal-overlay oculto">
+    <div class="form-modal">
+      <div class="modal-header">
+        <div>
+          <h2 id="tituloFormulario">Registrar Usuario</h2>
+          <p>Completa los datos del usuario del sistema.</p>
+        </div>
+        <button id="btnCerrarFormulario" class="modal-close">&times;</button>
+      </div>
+
+      <form id="usuarioForm">
+        <input type="hidden" id="idUsuario">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" placeholder="Ingrese el nombre" required>
+          </div>
+          <div class="form-group">
+            <label for="correo">Correo</label>
+            <input type="email" id="correo" placeholder="Ingrese el correo" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <div class="password-field">
+              <input type="password" id="password" placeholder="Ingrese la contraseña">
+              <button type="button" id="btnTogglePasswordUsuario" class="password-toggle">
+                <svg id="usuarioEyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg id="usuarioEyeClosed" class="oculto" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <path d="M3 3l18 18"></path>
+                  <path d="M10.6 10.6A2 2 0 0 0 13.4 13.4"></path>
+                  <path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6 0 10 8 10 8a15.8 15.8 0 0 1-3 4.1"></path>
+                  <path d="M6.6 6.6C3.8 8.5 2 12 2 12s4 8 10 8a10.8 10.8 0 0 0 4.1-.8"></path>
+                </svg>
+              </button>
+            </div>
+            <p class="password-help">Entre 8 y 10 caracteres, con mayúscula, minúscula, número y carácter especial.</p>
+            <button type="button" id="btnResetPasswordUsuario" class="btn-reset-password oculto">Resetear
+              contraseña</button>
+          </div>
+          <div class="form-group">
+            <label for="rol">Rol</label>
+            <select id="rol" required>
+              <option value="Administrador">Administrador</option>
+              <option value="Vendedor">Vendedor</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="btnCancelar" class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-save">Guardar Usuario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BÚSQUEDA -->
+  <div id="modalBusquedaUsuarios" class="modal-overlay oculto">
+    <div class="search-modal">
+      <div class="modal-header">
+        <div>
+          <h2>Buscar usuarios</h2>
+          <p>Filtra por nombre o rol en tiempo real.</p>
+        </div>
+        <button id="btnCerrarBusquedaUsuarios" class="modal-close">&times;</button>
+      </div>
+      <div class="search-grid">
+        <div>
+          <label for="buscarNombreUsuario">Nombre</label>
+          <input type="text" id="buscarNombreUsuario" placeholder="Ej: Administrador">
+        </div>
+        <div>
+          <label for="buscarRolUsuario">Rol</label>
+          <select id="buscarRolUsuario">
+            <option value="">Todos</option>
+            <option value="Administrador">Administrador</option>
+            <option value="Vendedor">Vendedor</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrapper modal-table">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Rol</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="resultadosBusquedaUsuariosBody">
+            <tr>
+              <td colspan="5" class="empty-state">Escribe un nombre o selecciona un rol para buscar</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/paginacion.js"></script>
+  <script src="../js/usuarios.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+
+  <script>
+    // Sincronizar nombre de usuario en el sidebar
+    document.addEventListener('DOMContentLoaded', function () {
+      const usuarioNombre = localStorage.getItem('nombre') || localStorage.getItem('usuarioNombre') || sessionStorage.getItem('nombre') || sessionStorage.getItem('usuarioNombre') || 'Usuario';
+      const usuarioRol = localStorage.getItem('rol') || localStorage.getItem('usuarioRol') || sessionStorage.getItem('rol') || sessionStorage.getItem('usuarioRol') || 'Rol';
+      const usuarioAvatar = usuarioNombre !== 'Usuario' ? usuarioNombre.charAt(0).toUpperCase() : '';
+
+      const sidebarNombre = document.getElementById('sidebarUsuarioNombre');
+      const sidebarRol = document.getElementById('sidebarUsuarioRol');
+      const sidebarAvatar = document.getElementById('sidebarUserAvatar');
+
+      if (sidebarNombre) sidebarNombre.textContent = usuarioNombre;
+      if (sidebarRol) sidebarRol.textContent = usuarioRol;
+      if (sidebarAvatar) sidebarAvatar.textContent = usuarioAvatar;
+    });
+
+    // Logout desde el sidebar
+    const logoutBtn = document.getElementById('btnLogoutSidebar');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuarioNombre');
+        localStorage.removeItem('usuarioRol');
+        window.location.href = '../pages/login.html';
+      });
+    }
+
+    // Toggle dark mode desde el sidebar
+    const themeToggleBtn = document.getElementById('btnToggleThemeSidebar');
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', function () {
+        document.body.classList.toggle('dark-mode');
+
+        // Cambiar texto del botón según el modo
+        if (document.body.classList.contains('dark-mode')) {
+          themeToggleBtn.innerHTML = '☀️ Light mode';
+        } else {
+          themeToggleBtn.innerHTML = '🌙 Dark mode';
+        }
+
+        // Guardar preferencia en localStorage
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode);
+      });
+
+      // Cargar preferencia guardada
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        themeToggleBtn.innerHTML = '☀️ Light mode';
+      }
+    }
+  </script>
+</body>
+
+</html>

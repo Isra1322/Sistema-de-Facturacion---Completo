@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Factura</title>
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/factura.css">
+</head>
+
+<body>
+  <div class="dashboard-layout" id="dashboardLayout">
+
+    <aside class="sidebar">
+
+      <div class="sidebar-user-info-top">
+        <div class="sidebar-user-avatar" id="sidebarUserAvatar"></div>
+        <div class="sidebar-user-details">
+          <strong id="sidebarUsuarioNombre">Usuario</strong>
+          <span class="user-role" id="sidebarUsuarioRol">—</span>
+        </div>
+        <button id="btnToggleThemeSidebar" class="theme-toggle-sidebar" title="Cambiar tema">
+          🌙 Dark mode
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="./index.html" class="nav-link">🏠 Inicio</a>
+        <a href="./usuarios.html" class="nav-link role-admin-only hidden-by-role">👥 Usuarios</a>
+        <a href="./clientes.html" class="nav-link role-admin-only hidden-by-role">👥 Clientes</a>
+        <a href="./productos.html" class="nav-link role-admin-only hidden-by-role">📦 Productos</a>
+        <a href="./factura.html" class="nav-link active">🧾 Nueva Factura</a>
+        <a href="./facturas.html" class="nav-link">📋 Consultar Facturas</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button type="button" class="sidebar-logout" id="btnLogoutSidebar">
+          🚪 Cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="btnToggleSidebar" type="button">
+            ☰
+          </button>
+        </div>
+
+        <div class="topbar-right">
+          <div class="datetime-card" aria-label="Fecha y hora actual">
+            <div class="datetime-item">
+              <span class="datetime-icon">📅</span>
+              <div>
+                <small>Fecha</small>
+                <strong id="fechaActualFactura">--/--/----</strong>
+              </div>
+            </div>
+
+            <div class="datetime-divider"></div>
+
+            <div class="datetime-item">
+              <span class="datetime-icon">🕒</span>
+              <div>
+                <small>Hora</small>
+                <strong id="horaActualFactura">--:--:-- --</strong>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <section class="page-title">
+        <div class="title-icon icon-doc" aria-hidden="true"></div>
+
+        <div>
+          <h1>Nueva Factura</h1>
+          <p>Selecciona un cliente, agrega productos y genera una factura.</p>
+        </div>
+      </section>
+
+      <section class="factura-stepper" aria-label="Pasos para generar factura">
+        <article class="stepper-item active">
+          <span class="step-badge">1</span>
+          <div>
+            <h3>Seleccionar cliente</h3>
+            <p>Elige o registra un cliente</p>
+          </div>
+        </article>
+
+        <span class="stepper-line"></span>
+
+        <article class="stepper-item">
+          <span class="step-badge">2</span>
+          <div>
+            <h3>Seleccionar productos</h3>
+            <p>Agrega los productos de la factura</p>
+          </div>
+        </article>
+
+        <span class="stepper-line"></span>
+
+        <article class="stepper-item">
+          <span class="step-badge">3</span>
+          <div>
+            <h3>Revisar y generar</h3>
+            <p>Verifica los datos y genera la factura</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="factura-workspace">
+        <div class="factura-left-column">
+          <section class="content-card cliente-seleccionado-card">
+            <div class="section-title">
+              <span class="section-mini-icon" aria-hidden="true">&#128101;</span>
+              <h2>Cliente</h2>
+            </div>
+
+            <div class="cliente-card-layout">
+              <div class="cliente-actions">
+                <button id="btnAbrirBusquedaCliente" type="button" class="btn-secondary-action">
+                  <span class="btn-action-icon icon-search" aria-hidden="true"></span>
+                  Seleccionar cliente
+                </button>
+
+                <button id="btnAbrirRegistroClienteFactura" type="button"
+                  class="btn-secondary-action btn-outline-action">
+                  <span class="btn-action-icon" aria-hidden="true">+&#128100;</span>
+                  Registrar cliente
+                </button>
+              </div>
+
+              <div id="clienteSeleccionadoBody" class="cliente-info-card">
+                <p class="empty-state">Ning&uacute;n cliente seleccionado</p>
+              </div>
+            </div>
+
+            <input type="hidden" id="buscarCliente">
+            <span id="clienteSeleccionadoTexto" class="hidden-text">Ninguno</span>
+          </section>
+
+          <section class="content-card producto-seleccionado-card">
+            <div class="section-title section-title-between">
+              <div class="section-title inner-section-title">
+                <span class="section-mini-icon" aria-hidden="true">&#128230;</span>
+                <h2>Productos</h2>
+              </div>
+
+              <button id="btnAbrirBusquedaProducto" type="button" class="btn-secondary-action compact-action">
+                <span class="btn-action-icon icon-search" aria-hidden="true"></span>
+                Seleccionar productos
+              </button>
+            </div>
+
+            <div class="producto-seleccionado-box">
+              <div class="producto-nombre-box">
+                <div class="producto-avatar" aria-hidden="true">&#128230;</div>
+                <div>
+                  <label>Producto</label>
+                  <span id="productoNombre">Ninguno</span>
+                </div>
+              </div>
+
+              <div class="producto-info-mini">
+                <label>Precio Unitario</label>
+                <strong id="productoPrecio">0.00</strong>
+              </div>
+
+              <div class="producto-info-mini stock-mini">
+                <label>Stock Disponible</label>
+                <strong id="productoStock">0</strong>
+              </div>
+
+              <div class="producto-info-mini iva-mini">
+                <label>IVA</label>
+                <strong id="productoIva">0%</strong>
+              </div>
+
+              <div class="producto-info-mini cantidad-mini">
+                <label>Cantidad</label>
+
+                <div class="cantidad-control">
+                  <button type="button" id="btnRestarCantidad">-</button>
+                  <input type="number" id="cantidadProducto" min="1" value="1">
+                  <button type="button" id="btnSumarCantidad">+</button>
+                </div>
+              </div>
+
+              <button id="btnAgregarProducto" type="button" class="btn-add">
+                Agregar
+              </button>
+            </div>
+
+            <input type="hidden" id="buscarProducto">
+            <div id="resultadosProductos" class="resultados-busqueda"></div>
+          </section>
+
+          <section class="content-card detalle-card">
+            <div class="section-title">
+              <span class="section-mini-icon" aria-hidden="true">&#128722;</span>
+              <h2>Detalle de la factura</h2>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="factura-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Subtotal con IVA</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody id="detalleFacturaBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <aside class="content-card resumen-card">
+          <img src="../../Resources/logo_factura.png" alt="Logo de factura" class="resumen-logo">
+          <h2>Resumen de pago</h2>
+
+          <div class="resumen-row">
+            <span>Subtotal:</span>
+            <strong id="subtotalFactura">$0.00</strong>
+          </div>
+
+          <div class="resumen-row">
+            <span>IVA total:</span>
+            <strong id="ivaFactura">$0.00</strong>
+          </div>
+
+          <hr>
+
+          <div class="resumen-row total-row">
+            <span>Total a pagar:</span>
+            <strong id="totalFactura">$0.00</strong>
+          </div>
+
+          <button id="btnGuardarFactura" type="button" class="btn-save-factura">
+            Guardar factura
+          </button>
+          <button id="btnCancelarFactura" type="button" class="btn-cancel-factura">
+            Cancelar factura
+          </button>
+        </aside>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL REGISTRAR CLIENTE -->
+  <div id="modalRegistroClienteFactura" class="modal-overlay oculto">
+    <div class="form-modal">
+
+      <div class="modal-header">
+        <div>
+          <h2>Registrar Cliente</h2>
+          <p>Completa los datos del cliente.</p>
+        </div>
+
+        <button id="btnCerrarRegistroClienteFactura" class="modal-close" type="button">
+          &times;
+        </button>
+      </div>
+
+      <form id="formRegistroClienteFactura">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="registroClienteNombreFactura">Nombre</label>
+            <input type="text" id="registroClienteNombreFactura" placeholder="Ingrese el nombre" required>
+          </div>
+
+          <div class="form-group">
+            <label for="registroClienteApellidoFactura">Apellido</label>
+            <input type="text" id="registroClienteApellidoFactura" placeholder="Ingrese el apellido" required>
+          </div>
+
+          <div class="form-group">
+            <label for="registroClienteTelefonoFactura">Tel&eacute;fono</label>
+            <input type="text" id="registroClienteTelefonoFactura" placeholder="Ingrese el tel&eacute;fono"
+              maxlength="10" required>
+          </div>
+
+          <div class="form-group">
+            <label for="registroClienteCorreoFactura">Correo</label>
+            <input type="email" id="registroClienteCorreoFactura" placeholder="Ingrese el correo" required>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="registroClienteDireccionFactura">Direcci&oacute;n</label>
+            <input type="text" id="registroClienteDireccionFactura" placeholder="Ingrese la direcci&oacute;n" required>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-save" id="btnGuardarRegistroClienteFactura">
+          Guardar Cliente
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL BUSCAR CLIENTES -->
+  <div id="modalBusquedaClientesFactura" class="modal-overlay oculto">
+    <div class="search-modal">
+
+      <div class="modal-header">
+        <div>
+          <h2>Buscar clientes</h2>
+          <p>Filtra por ID, nombre, apellido, correo o dirección en tiempo real.</p>
+        </div>
+
+        <button id="btnCerrarBusquedaClienteFactura" class="modal-close" type="button">
+          &times;
+        </button>
+      </div>
+
+      <div class="search-grid cliente-filter-grid">
+        <div>
+          <label for="filtroClienteFactura">Filtrar por</label>
+          <select id="filtroClienteFactura">
+            <option value="id">ID</option>
+            <option value="nombre" selected>Nombre</option>
+            <option value="apellido">Apellido</option>
+            <option value="correo">Correo</option>
+            <option value="direccion">Dirección</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="valorBusquedaClienteFactura">Valor a buscar</label>
+          <input type="text" id="valorBusquedaClienteFactura" placeholder="Ej: Juan">
+        </div>
+      </div>
+
+      <div class="modal-results-bar">
+        <span id="clientesFacturaTotalTexto" class="results-count-badge">
+          Cargando clientes...
+        </span>
+      </div>
+
+      <div class="table-wrapper modal-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Teléfono</th>
+              <th>Correo</th>
+              <th>Dirección</th>
+            </tr>
+          </thead>
+
+          <tbody id="resultadosBusquedaClientesFacturaBody">
+            <tr>
+              <td colspan="6" class="empty-state">
+                Escribe un valor para buscar para ver resultados
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-pagination modal-pagination-numerica">
+        <span id="paginaClientesFacturaTexto">
+          P&aacute;gina 1 de 1
+        </span>
+
+        <div id="paginacionClientesFacturaControles" class="pagination-pages">
+          <button id="btnAnteriorClientesFactura" type="button" data-page-action="prev">
+            Anterior
+          </button>
+
+          <button id="btnSiguienteClientesFactura" type="button" data-page-action="next">
+            Siguiente
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL BUSCAR PRODUCTOS -->
+  <div id="modalBusquedaProductosFactura" class="modal-overlay oculto">
+    <div class="search-modal">
+
+      <div class="modal-header">
+        <div>
+          <h2>Buscar productos</h2>
+          <p>Selecciona un producto para agregarlo a la factura.</p>
+        </div>
+
+        <button id="btnCerrarBusquedaProductoFactura" class="modal-close" type="button">
+          &times;
+        </button>
+      </div>
+
+      <div class="search-grid producto-filter-grid">
+        <div>
+          <label for="filtroProductoFactura">Filtrar por</label>
+          <select id="filtroProductoFactura">
+            <option value="id">ID</option>
+            <option value="nombre" selected>Nombre</option>
+            <option value="categoria">Categoría</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="valorBusquedaProductoFactura">Valor a buscar</label>
+          <input type="text" id="valorBusquedaProductoFactura" placeholder="Ej: Laptop"
+            list="categoriasProductoFactura">
+          <datalist id="categoriasProductoFactura">
+            <option value="Tecnologia"></option>
+            <option value="Alimentos"></option>
+            <option value="Medicamentos"></option>
+            <option value="Servicios"></option>
+            <option value="Ropa"></option>
+            <option value="Otros"></option>
+          </datalist>
+        </div>
+      </div>
+
+      <div class="modal-results-bar">
+        <span id="productosFacturaTotalTexto" class="results-count-badge">
+          Cargando productos...
+        </span>
+      </div>
+
+      <div class="table-wrapper modal-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>IVA</th>
+            </tr>
+          </thead>
+
+          <tbody id="resultadosBusquedaProductosFacturaBody">
+            <tr>
+              <td colspan="6" class="empty-state">
+                Escribe un valor para buscar para ver resultados
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-pagination modal-pagination-numerica">
+        <span id="paginaProductosFacturaTexto">
+          P&aacute;gina 1 de 1
+        </span>
+
+        <div id="paginacionProductosFacturaControles" class="pagination-pages">
+          <button id="btnAnteriorProductosFactura" type="button" data-page-action="prev">
+            Anterior
+          </button>
+
+          <button id="btnSiguienteProductosFactura" type="button" data-page-action="next">
+            Siguiente
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- MODAL CONFIRMACIÓN QUITAR PRODUCTO -->
+  <div id="modalConfirmacionDetalle" class="modal-overlay oculto">
+    <div class="confirm-modal">
+      <div class="confirm-icon">⚠️</div>
+
+      <h2>Quitar producto</h2>
+      <p>¿Seguro que deseas quitar este producto del detalle?</p>
+
+      <div class="confirm-actions">
+        <button id="btnCancelarQuitar" class="btn-cancelar" type="button">
+          Cancelar
+        </button>
+
+        <button id="btnAceptarQuitar" class="btn-confirmar" type="button">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL CONFIRMACIÓN CANCELAR FACTURA -->
+  <div id="modalConfirmacionCancelarFactura" class="modal-overlay oculto">
+    <div class="confirm-modal">
+      <div class="confirm-icon danger">!</div>
+
+      <h2>Cancelar factura</h2>
+      <p>¿Está seguro de cancelar la factura actual?</p>
+
+      <div class="confirm-actions">
+        <button id="btnCancelarLimpiezaFactura" class="btn-cancelar" type="button">
+          No cancelar
+        </button>
+
+        <button id="btnAceptarLimpiezaFactura" class="btn-confirmar" type="button">
+          Sí, cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container"></div>
+
+  <script src="../js/toast.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/paginacion.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+  <script type="module" src="../js/main.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // CAMBIADO: usar las claves correctas que guarda login.js
+    const usuarioNombre = localStorage.getItem('nombre') || localStorage.getItem('usuarioNombre') || sessionStorage.getItem('nombre') || sessionStorage.getItem('usuarioNombre') || 'Usuario';
+    const usuarioRol = localStorage.getItem('rol') || localStorage.getItem('usuarioRol') || sessionStorage.getItem('rol') || sessionStorage.getItem('usuarioRol') || 'Rol';
+    const usuarioAvatar = usuarioNombre !== 'Usuario' ? usuarioNombre.charAt(0).toUpperCase() : '';
+
+    const sidebarNombre = document.getElementById('sidebarUsuarioNombre');
+    const sidebarRol = document.getElementById('sidebarUsuarioRol');
+    const sidebarAvatar = document.getElementById('sidebarUserAvatar');
+
+    if (sidebarNombre) sidebarNombre.textContent = usuarioNombre;
+    if (sidebarRol) sidebarRol.textContent = usuarioRol;
+    if (sidebarAvatar) sidebarAvatar.textContent = usuarioAvatar;
+  });
+
+  const logoutBtn = document.getElementById('btnLogoutSidebar');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function () {
+      localStorage.removeItem('token');
+      localStorage.removeItem('rol');
+      localStorage.removeItem('nombre');
+      window.location.href = '../pages/login.html';
+    });
+  }
+
+  const themeToggleBtn = document.getElementById('btnToggleThemeSidebar');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', function () {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        themeToggleBtn.innerHTML = '☀️ Light mode';
+      } else {
+        themeToggleBtn.innerHTML = '🌙 Dark mode';
+      }
+      localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    });
+
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      themeToggleBtn.innerHTML = '☀️ Light mode';
+    }
+  }
+</script>
+</body>
+
+</html>

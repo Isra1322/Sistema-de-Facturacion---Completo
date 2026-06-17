@@ -1,0 +1,16 @@
+namespace SistemaFacturacion.Domain.Entities
+{
+    public class Producto
+    {
+        public int IdProducto { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public decimal Precio { get; set; }
+        public int Stock { get; set; }
+        public string Categoria { get; set; } = "Otros";
+        public bool AplicaIva { get; set; } = true;
+        public decimal PorcentajeIva { get; set; } = 15m;
+        public string Estado { get; set; } = "Activo";
+
+        public ICollection<DetalleFactura> DetallesFactura { get; set; } = new List<DetalleFactura>();
+    }
+}
